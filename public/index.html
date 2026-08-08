@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dustjacket</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F7F2E7;
+      --surface: #FFFFFF;
+      --surface-muted: #F1EADC;
+      --ink: #221E17;
+      --ink-muted: #6E665A;
+      --border: #E6DDCB;
+      --black-pill: #1C1B18;
+      --black-pill-hover: #322E27;
+      --green: #40492F;
+      --green-hover: #4E5A3B;
+      --rust: #9B4A34;
+      --rust-hover: #A9573F;
+      --link: #33608F;
+      --pill-bg: #ECE4D3;
+      --pill-text: #55503F;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      color: var(--ink);
+      text-align: center;
+    }
+
+    /* Toggle */
+    .toggle-bar {
+      display: flex;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px;
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      color: var(--ink-muted);
+      transition: background 0.2s, color 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .toggle-btn.active {
+      background: var(--black-pill);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(28, 27, 24, 0.25);
+    }
+
+    .subtitle {
+      color: var(--ink-muted);
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+      text-align: center;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 12px 32px rgba(34, 30, 23, 0.08);
+      padding: 2rem;
+      width: 100%;
+      max-width: 640px;
+      color: var(--ink);
+    }
+
+    /* === PROPOSE SECTION === */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+    }
+
+    label .optional {
+      font-weight: 400;
+      color: #a39c8d;
+      font-size: 0.85rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.6rem 0.1rem;
+      border: none;
+      border-bottom: 1.5px solid var(--border);
+      border-radius: 0;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      background: transparent;
+      color: var(--ink);
+      transition: border-color 0.2s, border-bottom-width 0.2s;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      background: var(--surface-muted);
+      color: var(--ink);
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: #a39c8d;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--black-pill);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    button[type="submit"]:hover {
+      background: var(--black-pill-hover);
+      transform: translateY(-1px);
+    }
+
+    button[type="submit"]:disabled {
+      background: #b7b2a5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading-msg {
+      text-align: center;
+      color: var(--ink-muted);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Book preview */
+    .preview {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: var(--surface-muted);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .preview-loading {
+      color: var(--ink-muted);
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+
+    .preview-body {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .preview-cover {
+      flex-shrink: 0;
+    }
+
+    .preview-cover img {
+      width: 70px;
+      border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(34, 30, 23, 0.18);
+    }
+
+    .preview-info {
+      flex: 1;
+    }
+
+    .preview-info p {
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    .preview-info p strong {
+      font-size: 0.9rem;
+      color: var(--ink);
+      display: block;
+      margin-bottom: 0.4rem;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .preview-none {
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+      font-style: italic;
+    }
+
+    .preview-dismiss {
+      margin-top: 0.6rem;
+      font-size: 0.85rem;
+      color: var(--rust);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      padding: 0;
+    }
+
+    .preview-dismiss:hover {
+      text-decoration: underline;
+    }
+
+    /* Success result card */
+    .result .card {
+      border-top: 4px solid var(--green);
+    }
+
+    .result h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--ink);
+    }
+
+    .result-body {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .result-cover {
+      flex-shrink: 0;
+    }
+
+    .result-cover img {
+      width: 80px;
+      border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(34, 30, 23, 0.18);
+    }
+
+    .result-info {
+      flex: 1;
+    }
+
+    .result-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+      color: var(--ink);
+    }
+
+    .result-info p {
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-info .user-reason {
+      color: var(--ink);
+    }
+
+    .submit-another {
+      margin-top: 1rem;
+      display: inline-block;
+      color: var(--link);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      background: none;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .submit-another:hover {
+      text-decoration: underline;
+    }
+
+    /* === VOTE SECTION === */
+    .proposal-header {
+      display: flex;
+      gap: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .proposal-cover img {
+      width: 90px;
+      border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(34, 30, 23, 0.18);
+    }
+
+    .proposal-cover-placeholder {
+      width: 90px;
+      height: 130px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-muted);
+      font-size: 0.8rem;
+    }
+
+    .proposal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: var(--ink);
+    }
+
+    .proposal-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .proposal-description {
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+      line-height: 1.6;
+      margin-bottom: 1.2rem;
+    }
+
+    .expand-toggle {
+      color: var(--link);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: none;
+      background: none;
+      padding: 0;
+      margin-top: 0.3rem;
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .expand-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .proposal-reason {
+      font-size: 0.9rem;
+      color: var(--ink);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      padding: 0.8rem 1rem;
+      background: var(--surface-muted);
+      border-radius: 14px;
+      border-left: 3px solid var(--green);
+    }
+
+    .proposal-reason strong {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      font-weight: 600;
+    }
+
+    .vote-buttons {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .vote-btn {
+      flex: 1;
+      padding: 0.75rem 0.5rem;
+      border: none;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s, background 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .vote-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .vote-btn:active {
+      transform: translateY(0);
+    }
+
+    .vote-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-interested {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-interested:hover {
+      background: var(--green-hover);
+    }
+
+    .btn-skip {
+      background: var(--pill-bg);
+      color: var(--pill-text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-not-interested {
+      background: var(--rust);
+      color: #fff;
+    }
+
+    .btn-not-interested:hover {
+      background: var(--rust-hover);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--ink-muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .vote-loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--ink-muted);
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dustjacket</h1>
+
+  <div class="toggle-bar">
+    <button class="toggle-btn active" id="toggle-propose">Propose</button>
+    <button class="toggle-btn" id="toggle-vote">Vote</button>
+  </div>
+
+  <!-- ==================== PROPOSE SECTION ==================== -->
+  <div id="section-propose" style="width:100%; max-width:640px;">
+    <p class="subtitle">Propose a fiction or non-fiction book.</p>
+
+    <div class="card" id="form-card">
+      <form id="recommend-form">
+        <div class="form-group">
+          <label for="bookNameAuthor">Book title and author</label>
+          <input
+            type="text"
+            id="bookNameAuthor"
+            name="bookNameAuthor"
+            placeholder="e.g. Dune by Frank Herbert"
+            required
+            autocomplete="off"
+          >
+        </div>
+
+        <div id="preview-section" hidden>
+          <div class="preview">
+            <div class="preview-loading" id="preview-loading">Looking up book...</div>
+            <div id="preview-content" hidden>
+              <div class="preview-body">
+                <div class="preview-cover" id="preview-cover"></div>
+                <div class="preview-info">
+                  <p><strong id="preview-title-author"></strong></p>
+                  <p id="preview-description"></p>
+                </div>
+              </div>
+            </div>
+            <div class="preview-none" id="preview-none" hidden>No description or cover found.</div>
+            <button type="button" class="preview-dismiss" id="preview-dismiss" hidden>Not this book</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="userReason">Why this book? <span class="optional">(optional)</span></label>
+          <textarea
+            id="userReason"
+            name="userReason"
+            placeholder="What makes this book worth reading?"
+          ></textarea>
+        </div>
+
+        <button type="submit" id="submit-btn">Submit book</button>
+        <p class="loading-msg" id="loading-msg" hidden>Saving your book proposal...</p>
+      </form>
+    </div>
+
+    <div class="result" id="result" hidden>
+      <div class="card">
+        <h2>Book proposal saved!</h2>
+        <div class="result-body">
+          <div class="result-cover" id="result-cover"></div>
+          <div class="result-info">
+            <h3 id="result-title"></h3>
+            <p id="result-description"></p>
+            <p class="user-reason" id="result-reason"></p>
+          </div>
+        </div>
+        <button class="submit-another" id="submit-another">Propose another book</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VOTE SECTION ==================== -->
+  <div id="section-vote" hidden style="width:100%; max-width:640px;">
+    <p class="subtitle">Vote on book proposals.</p>
+
+    <div class="card">
+      <div id="vote-loading" class="vote-loading">Loading next proposal...</div>
+
+      <div id="vote-proposal" hidden>
+        <div class="proposal-header">
+          <div class="proposal-cover" id="proposal-cover"></div>
+          <div class="proposal-meta">
+            <div class="proposal-title" id="proposal-title"></div>
+          </div>
+        </div>
+
+        <div class="proposal-description" id="proposal-description"></div>
+
+        <div class="proposal-reason" id="proposal-reason" hidden>
+          <strong>Why this book?</strong>
+          <span id="proposal-reason-text"></span>
+        </div>
+
+        <div class="vote-buttons">
+          <button class="vote-btn btn-interested" id="btn-interested">I'd read that!</button>
+          <button class="vote-btn btn-skip" id="btn-skip">Skip</button>
+          <button class="vote-btn btn-not-interested" id="btn-not-interested">Not interested</button>
+        </div>
+      </div>
+
+      <div id="vote-empty" class="empty-state" hidden>
+        You've voted on all proposals. Check back later for new ones!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== VOTER ID ====================
+    function getVoterId() {
+      let voterId = localStorage.getItem('bookclub_voter_id');
+      if (!voterId) {
+        voterId = 'voter_' + crypto.randomUUID();
+        localStorage.setItem('bookclub_voter_id', voterId);
+      }
+      return voterId;
+    }
+
+    const voterId = getVoterId();
+
+    // ==================== TOGGLE ====================
+    const togglePropose = document.getElementById('toggle-propose');
+    const toggleVote = document.getElementById('toggle-vote');
+    const sectionPropose = document.getElementById('section-propose');
+    const sectionVote = document.getElementById('section-vote');
+
+    togglePropose.addEventListener('click', () => {
+      togglePropose.classList.add('active');
+      toggleVote.classList.remove('active');
+      sectionPropose.hidden = false;
+      sectionVote.hidden = true;
+    });
+
+    toggleVote.addEventListener('click', () => {
+      toggleVote.classList.add('active');
+      togglePropose.classList.remove('active');
+      sectionVote.hidden = false;
+      sectionPropose.hidden = true;
+
+      // Always fetch the next proposal when switching to vote
+      loadNextProposal();
+    });
+
+    // ==================== PROPOSE ====================
+    const form = document.getElementById('recommend-form');
+    const formCard = document.getElementById('form-card');
+    const submitBtn = document.getElementById('submit-btn');
+    const loadingMsg = document.getElementById('loading-msg');
+    const resultDiv = document.getElementById('result');
+    const bookInput = document.getElementById('bookNameAuthor');
+
+    const previewSection = document.getElementById('preview-section');
+    const previewLoading = document.getElementById('preview-loading');
+    const previewContent = document.getElementById('preview-content');
+    const previewNone = document.getElementById('preview-none');
+    const previewCover = document.getElementById('preview-cover');
+    const previewDescription = document.getElementById('preview-description');
+    const previewTitleAuthor = document.getElementById('preview-title-author');
+    const previewDismiss = document.getElementById('preview-dismiss');
+
+    let previewTimeout = null;
+    let previewRejected = false;
+
+    bookInput.addEventListener('input', () => {
+      clearTimeout(previewTimeout);
+      const query = bookInput.value.trim();
+
+      if (query.length < 3) {
+        previewSection.hidden = true;
+        previewRejected = false;
+        return;
+      }
+
+      if (previewRejected) return;
+
+      previewTimeout = setTimeout(() => fetchPreview(query), 800);
+    });
+
+    async function fetchPreview(query) {
+      if (previewRejected) return;
+
+      previewSection.hidden = false;
+      previewLoading.hidden = false;
+      previewContent.hidden = true;
+      previewNone.hidden = true;
+      previewDismiss.hidden = true;
+
+      try {
+        const res = await fetch(`/api/preview?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+
+        if (!data.description && !data.coverUrl) {
+          previewLoading.hidden = true;
+          previewNone.hidden = false;
+          return;
+        }
+
+        const titleParts = [];
+        if (data.title) titleParts.push(data.title);
+        if (data.authors) titleParts.push(`by ${data.authors}`);
+        previewTitleAuthor.textContent = titleParts.join(' ') || '';
+
+        if (data.coverUrl) {
+          previewCover.innerHTML = `<img src="${data.coverUrl}" alt="Book cover">`;
+        } else {
+          previewCover.innerHTML = '';
+        }
+
+        if (data.description) {
+          const desc = data.description.length > 250
+            ? data.description.substring(0, 250) + '...'
+            : data.description;
+          previewDescription.textContent = desc;
+        } else {
+          previewDescription.textContent = 'No description available.';
+        }
+
+        previewLoading.hidden = true;
+        previewContent.hidden = false;
+        previewDismiss.hidden = false;
+
+      } catch (err) {
+        previewLoading.hidden = true;
+        previewNone.hidden = false;
+        previewDismiss.hidden = true;
+      }
+    }
+
+    previewDismiss.addEventListener('click', () => {
+      previewRejected = true;
+      previewSection.hidden = true;
+      previewDismiss.hidden = true;
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const bookNameAuthor = bookInput.value;
+      const userReason = document.getElementById('userReason').value;
+
+      submitBtn.disabled = true;
+      loadingMsg.hidden = false;
+
+      try {
+        const res = await fetch('/api/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bookNameAuthor, userReason, voterId, skipLookup: previewRejected })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.error || 'Something went wrong.');
+          return;
+        }
+
+        const rec = data.recommendation;
+
+        const resultTitleParts = [];
+        if (rec.fetchedTitle) resultTitleParts.push(rec.fetchedTitle);
+        if (rec.fetchedAuthors) resultTitleParts.push(`by ${rec.fetchedAuthors}`);
+        document.getElementById('result-title').textContent =
+          resultTitleParts.length > 0 ? resultTitleParts.join(' ') : rec.bookNameAuthor;
+
+        const descEl = document.getElementById('result-description');
+        if (rec.fetchedDescription) {
+          const desc = rec.fetchedDescription.length > 300
+            ? rec.fetchedDescription.substring(0, 300) + '...'
+            : rec.fetchedDescription;
+          descEl.textContent = desc;
+        } else {
+          descEl.textContent = 'No description found.';
+        }
+
+        const reasonEl = document.getElementById('result-reason');
+        if (rec.userReason) {
+          reasonEl.innerHTML = `<strong>Why this book:</strong> "${rec.userReason}"`;
+        } else {
+          reasonEl.textContent = '';
+        }
+
+        const coverEl = document.getElementById('result-cover');
+        if (rec.coverUrl) {
+          coverEl.innerHTML = `<img src="${rec.coverUrl}" alt="Book cover">`;
+        } else {
+          coverEl.innerHTML = '';
+        }
+
+        formCard.hidden = true;
+        resultDiv.hidden = false;
+
+      } catch (err) {
+        alert('Network error. Please try again.');
+      } finally {
+        submitBtn.disabled = false;
+        loadingMsg.hidden = true;
+      }
+    });
+
+    document.getElementById('submit-another').addEventListener('click', () => {
+      form.reset();
+      previewSection.hidden = true;
+      previewRejected = false;
+      formCard.hidden = false;
+      resultDiv.hidden = true;
+    });
+
+    // ==================== VOTE ====================
+    let currentProposal = null;
+
+    const voteLoadingEl = document.getElementById('vote-loading');
+    const voteProposalEl = document.getElementById('vote-proposal');
+    const voteEmptyEl = document.getElementById('vote-empty');
+
+    async function loadNextProposal() {
+      voteProposalEl.hidden = true;
+      voteEmptyEl.hidden = true;
+      voteLoadingEl.hidden = false;
+      setVoteButtonsDisabled(false);
+
+      try {
+        const res = await fetch(`/api/vote/next?voterId=${encodeURIComponent(voterId)}`);
+        const data = await res.json();
+
+        if (!data.proposal) {
+          voteLoadingEl.hidden = true;
+          voteEmptyEl.hidden = false;
+          return;
+        }
+
+        currentProposal = data.proposal;
+        renderVoteProposal(data.proposal);
+
+      } catch (err) {
+        voteLoadingEl.textContent = 'Failed to load. Please refresh.';
+      }
+    }
+
+    function renderVoteProposal(p) {
+      const coverEl = document.getElementById('proposal-cover');
+      if (p.cover_url) {
+        coverEl.innerHTML = `<img src="${p.cover_url}" alt="Book cover">`;
+      } else {
+        coverEl.innerHTML = '<div class="proposal-cover-placeholder">No cover</div>';
+      }
+
+      document.getElementById('proposal-title').textContent = formatTitleAuthor(p);
+
+      // Description with expand/collapse
+      const descEl = document.getElementById('proposal-description');
+      const PREVIEW_LEN = 150;
+
+      if (p.fetched_description) {
+        const full = p.fetched_description;
+        if (full.length > PREVIEW_LEN) {
+          const truncated = full.substring(0, PREVIEW_LEN) + '...';
+          descEl.innerHTML = `<span class="desc-text">${escapeHtml(truncated)}</span> <button class="expand-toggle" data-expanded="false">Show more</button>`;
+
+          const toggle = descEl.querySelector('.expand-toggle');
+          const textSpan = descEl.querySelector('.desc-text');
+          toggle.addEventListener('click', () => {
+            const isExpanded = toggle.dataset.expanded === 'true';
+            if (isExpanded) {
+              textSpan.textContent = truncated;
+              toggle.textContent = 'Show more';
+              toggle.dataset.expanded = 'false';
+            } else {
+              textSpan.textContent = full;
+              toggle.textContent = 'Show less';
+              toggle.dataset.expanded = 'true';
+            }
+          });
+        } else {
+          descEl.textContent = full;
+        }
+      } else {
+        descEl.textContent = '';
+      }
+
+      const reasonEl = document.getElementById('proposal-reason');
+      const reasonText = document.getElementById('proposal-reason-text');
+      if (p.user_reason) {
+        reasonText.textContent = p.user_reason;
+        reasonEl.hidden = false;
+      } else {
+        reasonEl.hidden = true;
+      }
+
+      voteLoadingEl.hidden = true;
+      voteProposalEl.hidden = false;
+    }
+
+    function setVoteButtonsDisabled(disabled) {
+      document.getElementById('btn-interested').disabled = disabled;
+      document.getElementById('btn-skip').disabled = disabled;
+      document.getElementById('btn-not-interested').disabled = disabled;
+    }
+
+    async function submitVote(vote) {
+      if (!currentProposal) return;
+      setVoteButtonsDisabled(true);
+
+      try {
+        await fetch('/api/vote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recommendationId: currentProposal.id,
+            voterId: voterId,
+            vote: vote
+          })
+        });
+        loadNextProposal();
+      } catch (err) {
+        setVoteButtonsDisabled(false);
+      }
+    }
+
+    document.getElementById('btn-interested').addEventListener('click', () => submitVote('interested'));
+    document.getElementById('btn-skip').addEventListener('click', () => submitVote('skip'));
+    document.getElementById('btn-not-interested').addEventListener('click', () => submitVote('not_interested'));
+
+    // Land directly on the Vote tab when linked via /vote (?view=vote)
+    if (new URLSearchParams(window.location.search).get('view') === 'vote') {
+      toggleVote.click();
+    }
+
+    // ==================== UTILS ====================
+    function formatTitleAuthor(p) {
+      if (p.fetched_title) {
+        return p.fetched_authors
+          ? `${p.fetched_title} by ${p.fetched_authors}`
+          : p.fetched_title;
+      }
+      return p.book_name_author;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

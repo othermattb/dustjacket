@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Proposals | Dustjacket</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F7F2E7;
+      --surface: #FFFFFF;
+      --surface-muted: #F1EADC;
+      --ink: #221E17;
+      --ink-muted: #6E665A;
+      --border: #E6DDCB;
+      --green: #40492F;
+      --rust: #9B4A34;
+      --pill-bg-green: #E4E8D9;
+      --pill-bg-rust: #F3E1D9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 2.5rem 1rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+      text-align: center;
+    }
+
+    .subtitle {
+      color: var(--ink-muted);
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+      text-align: center;
+    }
+
+    .table-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 12px 32px rgba(34, 30, 23, 0.08);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--surface-muted);
+    }
+
+    th {
+      text-align: left;
+      padding: 0.9rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th:first-child {
+      border-top-left-radius: 20px;
+    }
+
+    th:last-child {
+      border-top-right-radius: 20px;
+    }
+
+    td {
+      padding: 0.9rem 1rem;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--ink);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: var(--surface-muted);
+    }
+
+    .cover-cell img {
+      width: 50px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(34, 30, 23, 0.18);
+    }
+
+    .cover-cell {
+      width: 70px;
+    }
+
+    .description-cell {
+      max-width: 350px;
+      line-height: 1.5;
+      color: var(--ink-muted);
+    }
+
+    .reason-cell {
+      max-width: 200px;
+      line-height: 1.5;
+    }
+
+    .title-cell {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      white-space: nowrap;
+      color: var(--ink);
+    }
+
+    .date-cell {
+      white-space: nowrap;
+      color: var(--ink-muted);
+      font-size: 0.85rem;
+    }
+
+    .votes-cell {
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .votes-pill {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .votes-pill.positive {
+      background: var(--pill-bg-green);
+      color: var(--green);
+    }
+
+    .votes-pill.negative {
+      background: var(--pill-bg-rust);
+      color: var(--rust);
+      margin-left: 0.3rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--ink-muted);
+      font-size: 1.1rem;
+    }
+
+    .count {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dustjacket</h1>
+    <p class="subtitle">All book proposals</p>
+
+    <p class="count" id="count"></p>
+
+    <div class="table-wrapper">
+      <table id="proposals-table">
+        <thead>
+          <tr>
+            <th class="cover-cell">Cover</th>
+            <th>Title &amp; author</th>
+            <th>Description</th>
+            <th>Why this book?</th>
+            <th>Votes</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody id="proposals-body">
+        </tbody>
+      </table>
+      <div class="empty-state" id="empty-state" hidden>No proposals yet.</div>
+    </div>
+  </div>
+
+  <script>
+    async function loadProposals() {
+      try {
+        const res = await fetch('/api/recommendations');
+        const proposals = await res.json();
+
+        const tbody = document.getElementById('proposals-body');
+        const emptyState = document.getElementById('empty-state');
+        const countEl = document.getElementById('count');
+
+        if (proposals.length === 0) {
+          emptyState.hidden = false;
+          countEl.textContent = '';
+          return;
+        }
+
+        countEl.textContent = `${proposals.length} proposal${proposals.length !== 1 ? 's' : ''} submitted`;
+
+        tbody.innerHTML = proposals.map(p => {
+          const cover = p.cover_url
+            ? `<img src="${p.cover_url}" alt="Cover">`
+            : '—';
+
+          const description = p.fetched_description
+            ? truncate(p.fetched_description, 200)
+            : '—';
+
+          const reason = p.user_reason || '—';
+
+          const date = p.created_at
+            ? new Date(p.created_at + 'Z').toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric'
+              })
+            : '—';
+
+          const votes = `<span class="votes-pill positive">+${p.votes_interested || 0}</span><span class="votes-pill negative">-${p.votes_not_interested || 0}</span>`;
+
+          return `
+            <tr>
+              <td class="cover-cell">${cover}</td>
+              <td class="title-cell">${escapeHtml(formatTitleAuthor(p))}</td>
+              <td class="description-cell">${escapeHtml(description)}</td>
+              <td class="reason-cell">${escapeHtml(reason)}</td>
+              <td class="votes-cell">${votes}</td>
+              <td class="date-cell">${date}</td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error('Failed to load proposals:', err);
+        document.getElementById('empty-state').textContent = 'Failed to load proposals.';
+        document.getElementById('empty-state').hidden = false;
+      }
+    }
+
+    function truncate(str, len) {
+      return str.length > len ? str.substring(0, len) + '...' : str;
+    }
+
+    function formatTitleAuthor(p) {
+      if (p.fetched_title) {
+        return p.fetched_authors
+          ? `${p.fetched_title} by ${p.fetched_authors}`
+          : p.fetched_title;
+      }
+      return p.book_name_author;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    loadProposals();
+  </script>
+</body>
+</html>

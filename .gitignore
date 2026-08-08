@@ -1,0 +1,6 @@
+node_modules/
+books.db
+books.db-shm
+books.db-wal
+.env
+.DS_Store
