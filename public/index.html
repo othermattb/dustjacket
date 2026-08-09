@@ -52,6 +52,7 @@
 
     /* Toggle */
     .toggle-bar {
+      position: relative;
       display: flex;
       background: var(--surface-muted);
       border: 1px solid var(--border);
@@ -62,7 +63,26 @@
       max-width: 280px;
     }
 
+    .toggle-thumb {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      background: var(--black-pill);
+      border-radius: 999px;
+      box-shadow: 0 2px 8px rgba(28, 27, 24, 0.25);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 0;
+    }
+
+    .toggle-bar.vote-active .toggle-thumb {
+      transform: translateX(100%);
+    }
+
     .toggle-btn {
+      position: relative;
+      z-index: 1;
       flex: 1;
       padding: 0.6rem 1rem;
       border: none;
@@ -72,14 +92,12 @@
       cursor: pointer;
       background: transparent;
       color: var(--ink-muted);
-      transition: background 0.2s, color 0.2s;
+      transition: color 0.2s;
       font-family: 'Inter', sans-serif;
     }
 
     .toggle-btn.active {
-      background: var(--black-pill);
       color: #fff;
-      box-shadow: 0 2px 8px rgba(28, 27, 24, 0.25);
     }
 
     .subtitle {
@@ -491,7 +509,8 @@
 <body>
   <h1>Dustjacket</h1>
 
-  <div class="toggle-bar">
+  <div class="toggle-bar" id="toggle-bar">
+    <div class="toggle-thumb"></div>
     <button class="toggle-btn active" id="toggle-propose">Propose</button>
     <button class="toggle-btn" id="toggle-vote">Vote</button>
   </div>
@@ -610,6 +629,7 @@
     const voterId = getVoterId();
 
     // ==================== TOGGLE ====================
+    const toggleBar = document.getElementById('toggle-bar');
     const togglePropose = document.getElementById('toggle-propose');
     const toggleVote = document.getElementById('toggle-vote');
     const sectionPropose = document.getElementById('section-propose');
@@ -618,6 +638,7 @@
     togglePropose.addEventListener('click', () => {
       togglePropose.classList.add('active');
       toggleVote.classList.remove('active');
+      toggleBar.classList.remove('vote-active');
       sectionPropose.hidden = false;
       sectionVote.hidden = true;
     });
@@ -625,6 +646,7 @@
     toggleVote.addEventListener('click', () => {
       toggleVote.classList.add('active');
       togglePropose.classList.remove('active');
+      toggleBar.classList.add('vote-active');
       sectionVote.hidden = false;
       sectionPropose.hidden = true;
 
