@@ -83,7 +83,7 @@ app.get('/api/preview', async (req, res) => {
   let authors = null;
 
   try {
-    const googleData = await searchGoogleBooks(query.trim());
+    const googleData = await searchGoogleBooks(query.trim(), process.env.GOOGLE_BOOKS_API_KEY);
     if (googleData) {
       description = googleData.description || null;
       coverUrl = googleData.coverUrl || null;
@@ -125,7 +125,7 @@ app.post('/api/recommend', async (req, res) => {
 
   if (!skipLookup) {
     try {
-      const googleData = await searchGoogleBooks(bookNameAuthor.trim());
+      const googleData = await searchGoogleBooks(bookNameAuthor.trim(), process.env.GOOGLE_BOOKS_API_KEY);
       if (googleData) {
         fetchedDescription = googleData.description || null;
         coverUrl = googleData.coverUrl || null;
