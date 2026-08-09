@@ -1,3 +1,0 @@
-# Preserve the old Express convenience routes as static rewrites/redirects.
-/proposals   /proposals.html   200
-/vote        /?view=vote       302

@@ -1,10 +1,12 @@
 name = "dustjacket"
+main = "worker.js"
 compatibility_date = "2024-09-23"
 
 [assets]
 directory = "public"
+binding = "ASSETS"
 
 [[d1_databases]]
-binding = "DB"                # accessible in Functions as env.DB
+binding = "DB"                # accessible in worker.js as env.DB
 database_name = "dustjacket-db"
 database_id = "5f01566e-0a2e-4b5d-8457-ad4776eec0c7"
