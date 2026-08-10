@@ -13,12 +13,12 @@
       --ink: #221E17;
       --ink-muted: #6E665A;
       --border: #E6DDCB;
-      --black-pill: #1C1B18;
-      --black-pill-hover: #322E27;
       --green: #40492F;
       --green-hover: #4E5A3B;
       --rust: #9B4A34;
       --rust-hover: #A9573F;
+      --primary: #561721;
+      --primary-hover: #76202d;
       --link: #33608F;
       --pill-bg: #ECE4D3;
       --pill-text: #55503F;
@@ -69,7 +69,7 @@
       left: 4px;
       width: calc(50% - 4px);
       height: calc(100% - 8px);
-      background: var(--black-pill);
+      background: var(--primary);
       border-radius: 999px;
       box-shadow: 0 2px 8px rgba(28, 27, 24, 0.25);
       transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -191,7 +191,7 @@
     button[type="submit"] {
       width: 100%;
       padding: 0.85rem;
-      background: var(--black-pill);
+      background: var(--primary);
       color: #fff;
       border: none;
       border-radius: 999px;
@@ -203,7 +203,7 @@
     }
 
     button[type="submit"]:hover {
-      background: var(--black-pill-hover);
+      background: var(--primary-hover);
       transform: translateY(-1px);
     }
 
@@ -479,12 +479,12 @@
     }
 
     .btn-interested {
-      background: var(--green);
+      background: var(--primary);
       color: #fff;
     }
 
     .btn-interested:hover {
-      background: var(--green-hover);
+      background: var(--primary-hover);
     }
 
     .btn-skip {
@@ -494,12 +494,12 @@
     }
 
     .btn-not-interested {
-      background: var(--rust);
+      background: var(--primary);
       color: #fff;
     }
 
     .btn-not-interested:hover {
-      background: var(--rust-hover);
+      background: var(--primary-hover);
     }
 
     .empty-state {
