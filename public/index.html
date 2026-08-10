@@ -94,6 +94,12 @@
       color: var(--ink-muted);
       transition: color 0.2s;
       font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .toggle-btn:focus-visible {
+      outline: 2px solid var(--ink-muted);
+      outline-offset: 2px;
     }
 
     .toggle-btn.active {
