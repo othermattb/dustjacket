@@ -47,6 +47,27 @@
       text-align: center;
     }
 
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .site-header img {
+      width: 28px;
+      height: 28px;
+      display: block;
+    }
+
+    .site-header .wordmark {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
     .subtitle {
       color: var(--ink-muted);
       margin-bottom: 2rem;
@@ -181,7 +202,10 @@
 </head>
 <body>
   <div class="container">
-    <h1>Dustjacket</h1>
+    <a class="site-header" href="/" style="text-decoration:none;">
+      <img src="brand/dustjacket-icon.png" alt="Dustjacket logo">
+      <span class="wordmark">Dustjacket</span>
+    </a>
     <p class="subtitle">All book proposals</p>
 
     <p class="count" id="count"></p>

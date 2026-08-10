@@ -50,6 +50,28 @@
       text-align: center;
     }
 
+    .site-header {
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .site-header img {
+      width: 28px;
+      height: 28px;
+      display: block;
+    }
+
+    .site-header .wordmark {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
     /* Toggle */
     .toggle-bar {
       position: relative;
@@ -520,7 +542,10 @@
   </style>
 </head>
 <body>
-  <h1>Dustjacket</h1>
+  <a class="site-header" href="/" style="text-decoration:none;">
+    <img src="brand/dustjacket-icon.png" alt="Dustjacket logo">
+    <span class="wordmark">Dustjacket</span>
+  </a>
 
   <div class="toggle-bar" id="toggle-bar">
     <div class="toggle-thumb"></div>
