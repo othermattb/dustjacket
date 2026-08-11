@@ -90,9 +90,10 @@
       text-align: center;
     }
 
-    /* === CTA button — same height as the propose/vote CTAs === */
+    /* === CTA button — same style as the propose/vote CTAs === */
     .choose-btn {
-      padding: 0.85rem 2.75rem;
+      width: 100%;
+      padding: 0.85rem;
       background: var(--cta);
       color: #fff;
       border: none;
@@ -137,18 +138,33 @@
     }
 
     /* === COVER STAGE ===
-       Height is fixed to a book cover's height; empty until a spin starts,
-       then cover art slides through this same frame and finally lands. */
+       Height is fixed to a book cover's height; shows a mystery placeholder
+       until a spin starts, then cover art slides through this same frame
+       and finally lands. */
     .cover-stage {
       position: relative;
       width: 100%;
-      height: 190px;
-      background: var(--surface-muted);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      height: 220px;
       overflow: hidden;
       display: flex;
       align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .placeholder-cover {
+      width: 160px;
+      height: 220px;
+      border-radius: 12px;
+      background: var(--ink);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 4.5rem;
+      box-shadow: 0 10px 24px rgba(34, 30, 23, 0.25);
     }
 
     .reel-track {
@@ -209,19 +225,6 @@
       color: var(--ink-muted);
       font-size: 0.9rem;
       line-height: 1.4;
-    }
-
-    #choose-btn {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-    }
-
-    #choose-btn.hidden-btn {
-      opacity: 0;
-      pointer-events: none;
     }
 
     /* === RESULT CARD === */
@@ -338,31 +341,34 @@
   </a>
 
   <div class="stage-wrap">
-    <div class="card">
-      <p class="subtitle">Let fate decide.</p>
+    <div style="width:100%; max-width:640px;">
+      <p class="subtitle">Let fate decide next month's book.</p>
 
-      <div class="cover-stage" id="cover-stage">
-        <div class="reel-track" id="reel-track"></div>
-        <p class="stage-message" id="stage-message" hidden></p>
+      <div class="card">
+        <div class="cover-stage" id="cover-stage">
+          <div class="placeholder-cover" id="placeholder-cover">?</div>
+          <div class="reel-track" id="reel-track"></div>
+          <p class="stage-message" id="stage-message" hidden></p>
+        </div>
         <button class="choose-btn" id="choose-btn">Choose book</button>
       </div>
-    </div>
 
-    <div class="result-card" id="decide-result" hidden>
-      <p class="result-eyebrow">The book is...</p>
-      <div class="result-body">
-        <div class="result-cover" id="decide-cover"></div>
-        <div class="result-info">
-          <h2 id="decide-title"></h2>
-          <p id="decide-description"></p>
-          <p class="user-reason" id="decide-reason" hidden>
-            <strong>Why this book?</strong>
-            <span id="decide-reason-text"></span>
-          </p>
-          <span class="votes-pill" id="decide-votes"></span>
+      <div class="result-card" id="decide-result" hidden>
+        <p class="result-eyebrow">The book is...</p>
+        <div class="result-body">
+          <div class="result-cover" id="decide-cover"></div>
+          <div class="result-info">
+            <h2 id="decide-title"></h2>
+            <p id="decide-description"></p>
+            <p class="user-reason" id="decide-reason" hidden>
+              <strong>Why this book?</strong>
+              <span id="decide-reason-text"></span>
+            </p>
+            <span class="votes-pill" id="decide-votes"></span>
+          </div>
         </div>
+        <button class="choose-btn secondary" id="choose-again-btn">Choose another book</button>
       </div>
-      <button class="choose-btn secondary" id="choose-again-btn">Choose another book</button>
     </div>
   </div>
 
@@ -370,6 +376,7 @@
     const chooseBtn = document.getElementById('choose-btn');
     const chooseAgainBtn = document.getElementById('choose-again-btn');
     const coverStage = document.getElementById('cover-stage');
+    const placeholderCover = document.getElementById('placeholder-cover');
     const reelTrack = document.getElementById('reel-track');
     const stageMessage = document.getElementById('stage-message');
     const resultCard = document.getElementById('decide-result');
@@ -386,10 +393,10 @@
     async function startDecide() {
       setButtonBusy(true);
       hideStageMessage();
+      placeholderCover.hidden = true;
       reelTrack.innerHTML = '';
       resultCard.hidden = true;
       resultCard.classList.remove('visible');
-      chooseBtn.classList.add('hidden-btn');
 
       try {
         const res = await fetch('/api/recommendations');
@@ -506,7 +513,6 @@
     function resetButton(label) {
       chooseBtn.disabled = false;
       chooseBtn.textContent = label;
-      chooseBtn.classList.remove('hidden-btn');
     }
 
     function showStageMessage(text) {
