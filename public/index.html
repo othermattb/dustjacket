@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dustjacket</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&family=Outfit:wght@200&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #F7F2E7;
-      --surface: #FFFFFF;
-      --surface-muted: #F1EADC;
+      --surface: #fcfbfa;
+      --surface-muted: #fcfbfa;
       --ink: #221E17;
       --ink-muted: #6E665A;
       --border: #E6DDCB;
@@ -17,9 +17,11 @@
       --green-hover: #4E5A3B;
       --rust: #9B4A34;
       --rust-hover: #A9573F;
-      --primary: #561721;
-      --primary-hover: #76202d;
-      --link: #33608F;
+      --primary: #221E17;
+      --primary-hover: #4b4233;
+      --cta: #7a0031;
+      --cta-hover: #a50042;
+      --link: #005E7B;
       --pill-bg: #ECE4D3;
       --pill-text: #55503F;
     }
@@ -38,7 +40,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1.5rem 1rem;
+      padding: 1rem 1rem 1.5rem;
     }
 
     h1 {
@@ -59,16 +61,16 @@
     }
 
     .site-header img {
-      width: 28px;
-      height: 28px;
+      width: auto;
+      height: 21px;
       display: block;
     }
 
     .site-header .wordmark {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-weight: 400;
-      font-size: 1.15rem;
-      letter-spacing: normal;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 200;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
       color: var(--ink);
     }
 
@@ -213,7 +215,7 @@
     button[type="submit"] {
       width: 100%;
       padding: 0.85rem;
-      background: var(--primary);
+      background: var(--cta);
       color: #fff;
       border: none;
       border-radius: 999px;
@@ -225,7 +227,7 @@
     }
 
     button[type="submit"]:hover {
-      background: var(--primary-hover);
+      background: var(--cta-hover);
       transform: translateY(-1px);
     }
 
@@ -299,7 +301,7 @@
     .preview-dismiss {
       margin-top: 0.6rem;
       font-size: 0.85rem;
-      color: var(--rust);
+      color: #005E7B;
       background: none;
       border: none;
       cursor: pointer;
@@ -451,7 +453,7 @@
       padding: 0.8rem 1rem;
       background: var(--surface-muted);
       border-radius: 14px;
-      border-left: 3px solid var(--green);
+      border-left: 3px solid #221E17;
     }
 
     .proposal-reason strong {
@@ -463,20 +465,25 @@
     }
 
     .vote-buttons {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 0.6rem;
+    }
+
+    .btn-skip {
+      grid-column: 1 / -1;
     }
 
     @media (max-width: 480px) {
       .vote-buttons {
-        flex-direction: column;
+        grid-template-columns: 1fr;
       }
     }
 
     .vote-btn {
       flex: 1;
       padding: 0.75rem 0.5rem;
-      border: none;
+      border: 2px solid transparent;
       border-radius: 999px;
       font-size: 1rem;
       font-weight: 700;
@@ -501,28 +508,31 @@
     }
 
     .btn-interested {
-      background: var(--primary);
+      background: var(--cta);
       color: #fff;
     }
 
     .btn-interested:hover {
-      background: var(--primary-hover);
+      background: var(--cta-hover);
     }
 
     .btn-skip {
-      background: var(--pill-bg);
-      color: var(--pill-text);
-      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--cta);
+    }
+
+    .btn-skip:hover {
+      background: rgba(122, 0, 49, 0.08);
     }
 
     .btn-not-interested {
       background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
+      color: var(--cta);
+      border-color: var(--cta);
     }
 
     .btn-not-interested:hover {
-      background: rgba(86, 23, 33, 0.08);
+      background: rgba(122, 0, 49, 0.08);
     }
 
     .empty-state {
@@ -642,8 +652,8 @@
 
         <div class="vote-buttons">
           <button class="vote-btn btn-interested" id="btn-interested">I'd read that!</button>
-          <button class="vote-btn btn-skip" id="btn-skip">Skip</button>
           <button class="vote-btn btn-not-interested" id="btn-not-interested">Not interested</button>
+          <button class="vote-btn btn-skip" id="btn-skip">Skip</button>
         </div>
       </div>
 
