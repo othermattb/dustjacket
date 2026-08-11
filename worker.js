@@ -17,6 +17,10 @@ export default {
       const rewritten = new URL('/proposals.html', url);
       return env.ASSETS.fetch(new Request(rewritten, request));
     }
+    if (pathname === '/decide' && method === 'GET') {
+      const rewritten = new URL('/decide.html', url);
+      return env.ASSETS.fetch(new Request(rewritten, request));
+    }
     if (pathname === '/vote' && method === 'GET') {
       return Response.redirect(new URL('/?view=vote', url), 302);
     }

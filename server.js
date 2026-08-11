@@ -65,6 +65,11 @@ app.get('/proposals', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'proposals.html'));
 });
 
+// Serve the "decide" slot-machine picker
+app.get('/decide', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'decide.html'));
+});
+
 // Legacy voting page URL — now the Vote toggle on the home page
 app.get('/vote', (req, res) => {
   res.redirect('/?view=vote');

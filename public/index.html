@@ -100,7 +100,7 @@
       z-index: 0;
     }
 
-    .toggle-bar.vote-active .toggle-thumb {
+    .toggle-bar.propose-active .toggle-thumb {
       transform: translateX(100%);
     }
 
@@ -559,12 +559,47 @@
 
   <div class="toggle-bar" id="toggle-bar">
     <div class="toggle-thumb"></div>
-    <button class="toggle-btn active" id="toggle-propose">Propose</button>
-    <button class="toggle-btn" id="toggle-vote">Vote</button>
+    <button class="toggle-btn active" id="toggle-vote">Vote</button>
+    <button class="toggle-btn" id="toggle-propose">Propose</button>
+  </div>
+
+  <!-- ==================== VOTE SECTION ==================== -->
+  <div id="section-vote" style="width:100%; max-width:640px;">
+    <p class="subtitle">Vote on book proposals.</p>
+
+    <div class="card">
+      <div id="vote-loading" class="vote-loading">Loading next proposal...</div>
+
+      <div id="vote-proposal" hidden>
+        <div class="proposal-header">
+          <div class="proposal-cover" id="proposal-cover"></div>
+          <div class="proposal-meta">
+            <div class="proposal-title" id="proposal-title"></div>
+          </div>
+        </div>
+
+        <div class="proposal-description" id="proposal-description"></div>
+
+        <div class="proposal-reason" id="proposal-reason" hidden>
+          <strong>Why this book?</strong>
+          <span id="proposal-reason-text"></span>
+        </div>
+
+        <div class="vote-buttons">
+          <button class="vote-btn btn-interested" id="btn-interested">I'd read that!</button>
+          <button class="vote-btn btn-not-interested" id="btn-not-interested">Not interested</button>
+          <button class="vote-btn btn-skip" id="btn-skip">Skip</button>
+        </div>
+      </div>
+
+      <div id="vote-empty" class="empty-state" hidden>
+        You've voted on all proposals. Check back later for new ones!
+      </div>
+    </div>
   </div>
 
   <!-- ==================== PROPOSE SECTION ==================== -->
-  <div id="section-propose" style="width:100%; max-width:640px;">
+  <div id="section-propose" hidden style="width:100%; max-width:640px;">
     <p class="subtitle">Propose a fiction or non-fiction book.</p>
 
     <div class="card" id="form-card">
@@ -628,41 +663,6 @@
     </div>
   </div>
 
-  <!-- ==================== VOTE SECTION ==================== -->
-  <div id="section-vote" hidden style="width:100%; max-width:640px;">
-    <p class="subtitle">Vote on book proposals.</p>
-
-    <div class="card">
-      <div id="vote-loading" class="vote-loading">Loading next proposal...</div>
-
-      <div id="vote-proposal" hidden>
-        <div class="proposal-header">
-          <div class="proposal-cover" id="proposal-cover"></div>
-          <div class="proposal-meta">
-            <div class="proposal-title" id="proposal-title"></div>
-          </div>
-        </div>
-
-        <div class="proposal-description" id="proposal-description"></div>
-
-        <div class="proposal-reason" id="proposal-reason" hidden>
-          <strong>Why this book?</strong>
-          <span id="proposal-reason-text"></span>
-        </div>
-
-        <div class="vote-buttons">
-          <button class="vote-btn btn-interested" id="btn-interested">I'd read that!</button>
-          <button class="vote-btn btn-not-interested" id="btn-not-interested">Not interested</button>
-          <button class="vote-btn btn-skip" id="btn-skip">Skip</button>
-        </div>
-      </div>
-
-      <div id="vote-empty" class="empty-state" hidden>
-        You've voted on all proposals. Check back later for new ones!
-      </div>
-    </div>
-  </div>
-
   <script>
     // ==================== VOTER ID ====================
     function getVoterId() {
@@ -686,7 +686,7 @@
     togglePropose.addEventListener('click', () => {
       togglePropose.classList.add('active');
       toggleVote.classList.remove('active');
-      toggleBar.classList.remove('vote-active');
+      toggleBar.classList.add('propose-active');
       sectionPropose.hidden = false;
       sectionVote.hidden = true;
     });
@@ -694,7 +694,7 @@
     toggleVote.addEventListener('click', () => {
       toggleVote.classList.add('active');
       togglePropose.classList.remove('active');
-      toggleBar.classList.add('vote-active');
+      toggleBar.classList.remove('propose-active');
       sectionVote.hidden = false;
       sectionPropose.hidden = true;
 
@@ -982,9 +982,11 @@
     document.getElementById('btn-skip').addEventListener('click', () => submitVote('skip'));
     document.getElementById('btn-not-interested').addEventListener('click', () => submitVote('not_interested'));
 
-    // Land directly on the Vote tab when linked via /vote (?view=vote)
-    if (new URLSearchParams(window.location.search).get('view') === 'vote') {
-      toggleVote.click();
+    // Vote is the default tab; land on Propose instead when linked via ?view=propose
+    if (new URLSearchParams(window.location.search).get('view') === 'propose') {
+      togglePropose.click();
+    } else {
+      loadNextProposal();
     }
 
     // ==================== UTILS ====================

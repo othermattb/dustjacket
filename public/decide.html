@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decide | Dustjacket</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&family=Outfit:wght@200&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F7F2E7;
+      --surface: #fcfbfa;
+      --surface-muted: #F2ECDD;
+      --ink: #221E17;
+      --ink-muted: #6E665A;
+      --border: #E6DDCB;
+      --green: #40492F;
+      --rust: #9B4A34;
+      --cta: #7a0031;
+      --cta-hover: #a50042;
+      --pill-bg-green: #E4E8D9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 1rem 3rem;
+    }
+
+    .site-header {
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 1.75rem;
+      max-width: 640px;
+      width: 100%;
+      text-decoration: none;
+    }
+
+    .site-header img {
+      width: auto;
+      height: 21px;
+      display: block;
+    }
+
+    .site-header .wordmark {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 200;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+    }
+
+    .stage-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+      min-height: 30vh;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 12px 32px rgba(34, 30, 23, 0.08);
+      padding: 2rem;
+      width: 100%;
+      max-width: 640px;
+      color: var(--ink);
+    }
+
+    .subtitle {
+      color: var(--ink-muted);
+      margin-bottom: 1.75rem;
+      font-size: 1.05rem;
+      text-align: center;
+    }
+
+    /* === CTA button — same height as the propose/vote CTAs === */
+    .choose-btn {
+      padding: 0.85rem 2.75rem;
+      background: var(--cta);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(122, 0, 49, 0.28);
+      transition: background 0.2s, transform 0.1s, opacity 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .choose-btn:hover:not(:disabled) {
+      background: var(--cta-hover);
+      transform: translateY(-1px);
+    }
+
+    .choose-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .choose-btn:disabled {
+      background: #b7b2a5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .choose-btn.secondary {
+      margin-top: 1.5rem;
+      padding: 0.7rem 1.75rem;
+      font-size: 0.9rem;
+      background: var(--surface);
+      color: var(--ink);
+      border: 1px solid var(--border);
+      box-shadow: none;
+      width: 100%;
+    }
+
+    .choose-btn.secondary:hover:not(:disabled) {
+      background: var(--surface-muted);
+      transform: translateY(-1px);
+    }
+
+    /* === COVER STAGE ===
+       Height is fixed to a book cover's height; empty until a spin starts,
+       then cover art slides through this same frame and finally lands. */
+    .cover-stage {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .reel-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      height: 100%;
+      will-change: transform;
+    }
+
+    .reel-item {
+      flex: 0 0 114px;
+      height: 160px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: 0 6px 16px rgba(34, 30, 23, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0.5rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .reel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .reel-item .no-cover {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      line-height: 1.3;
+      color: var(--ink-muted);
+    }
+
+    .reel-item.landed {
+      transform: scale(1.04);
+      box-shadow: 0 0 0 3px var(--cta), 0 12px 26px rgba(34, 30, 23, 0.28);
+    }
+
+    .stage-message {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1rem 1.5rem;
+      color: var(--ink-muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    #choose-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+
+    #choose-btn.hidden-btn {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* === RESULT CARD === */
+    .result-card {
+      width: 100%;
+      max-width: 640px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--green);
+      border-radius: 20px;
+      box-shadow: 0 12px 32px rgba(34, 30, 23, 0.08);
+      padding: 1.75rem;
+      margin-top: 1.5rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .result-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-eyebrow {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.6rem;
+    }
+
+    .result-body {
+      display: flex;
+      gap: 1.25rem;
+    }
+
+    .result-cover {
+      flex-shrink: 0;
+    }
+
+    .result-cover img {
+      width: 100px;
+      border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(34, 30, 23, 0.18);
+      display: block;
+    }
+
+    .result-cover .no-cover {
+      width: 100px;
+      height: 150px;
+      border-radius: 8px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0.4rem;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+    }
+
+    .result-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .result-info h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+    }
+
+    .result-info p {
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+      line-height: 1.5;
+      margin-bottom: 0.6rem;
+    }
+
+    .result-info .user-reason {
+      color: var(--ink);
+    }
+
+    .result-info .user-reason strong {
+      color: var(--ink-muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .votes-pill {
+      display: inline-block;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--pill-bg-green);
+      color: var(--green);
+    }
+  </style>
+</head>
+<body>
+  <a class="site-header" href="/">
+    <img src="brand/dustjacket-icon.png" alt="Dustjacket logo">
+    <span class="wordmark">dustjacket</span>
+  </a>
+
+  <div class="stage-wrap">
+    <div class="card">
+      <p class="subtitle">Let fate decide.</p>
+
+      <div class="cover-stage" id="cover-stage">
+        <div class="reel-track" id="reel-track"></div>
+        <p class="stage-message" id="stage-message" hidden></p>
+        <button class="choose-btn" id="choose-btn">Choose book</button>
+      </div>
+    </div>
+
+    <div class="result-card" id="decide-result" hidden>
+      <p class="result-eyebrow">The book is...</p>
+      <div class="result-body">
+        <div class="result-cover" id="decide-cover"></div>
+        <div class="result-info">
+          <h2 id="decide-title"></h2>
+          <p id="decide-description"></p>
+          <p class="user-reason" id="decide-reason" hidden>
+            <strong>Why this book?</strong>
+            <span id="decide-reason-text"></span>
+          </p>
+          <span class="votes-pill" id="decide-votes"></span>
+        </div>
+      </div>
+      <button class="choose-btn secondary" id="choose-again-btn">Choose another book</button>
+    </div>
+  </div>
+
+  <script>
+    const chooseBtn = document.getElementById('choose-btn');
+    const chooseAgainBtn = document.getElementById('choose-again-btn');
+    const coverStage = document.getElementById('cover-stage');
+    const reelTrack = document.getElementById('reel-track');
+    const stageMessage = document.getElementById('stage-message');
+    const resultCard = document.getElementById('decide-result');
+
+    const ITEM_WIDTH = 114;
+    const ITEM_GAP = 14;
+    const STEP = ITEM_WIDTH + ITEM_GAP;
+    const MIN_REEL_LENGTH = 24;
+    const SPIN_DURATION_MS = 4200;
+
+    chooseBtn.addEventListener('click', startDecide);
+    chooseAgainBtn.addEventListener('click', startDecide);
+
+    async function startDecide() {
+      setButtonBusy(true);
+      hideStageMessage();
+      reelTrack.innerHTML = '';
+      resultCard.hidden = true;
+      resultCard.classList.remove('visible');
+      chooseBtn.classList.add('hidden-btn');
+
+      try {
+        const res = await fetch('/api/recommendations');
+        if (!res.ok) throw new Error('Request failed');
+        const rows = await res.json();
+
+        // Eligibility: any book with at least one "not interested" vote is excluded.
+        const eligible = rows.filter(r => (r.votes_not_interested || 0) === 0);
+
+        if (eligible.length === 0) {
+          showStageMessage('No eligible proposals right now — every book on the list has at least one "not interested" vote.');
+          resetButton('Try again');
+          return;
+        }
+
+        const winner = eligible[Math.floor(Math.random() * eligible.length)];
+        spinReel(eligible, winner);
+      } catch (err) {
+        console.error('Failed to load proposals for decide:', err);
+        showStageMessage('Something went wrong loading proposals. Please try again.');
+        resetButton('Try again');
+      }
+    }
+
+    function spinReel(eligible, winner) {
+      const reel = buildReel(eligible, winner);
+      reelTrack.innerHTML = reel.map(renderReelItem).join('');
+
+      // Snap to start with no transition, then force reflow before animating.
+      reelTrack.style.transition = 'none';
+      reelTrack.style.transform = 'translateX(0px)';
+      void reelTrack.offsetWidth;
+
+      const frameWidth = coverStage.clientWidth;
+      const targetIndex = reel.length - 1;
+      const finalX = -(targetIndex * STEP) + (frameWidth / 2 - ITEM_WIDTH / 2);
+
+      requestAnimationFrame(() => {
+        reelTrack.style.transition = `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.11, 0.72, 0.16, 1)`;
+        reelTrack.style.transform = `translateX(${finalX}px)`;
+      });
+
+      function onSpinEnd(e) {
+        if (e.propertyName !== 'transform') return;
+        reelTrack.removeEventListener('transitionend', onSpinEnd);
+
+        const items = reelTrack.querySelectorAll('.reel-item');
+        const landedEl = items[items.length - 1];
+        if (landedEl) landedEl.classList.add('landed');
+
+        setTimeout(() => showResult(winner), 350);
+      }
+      reelTrack.addEventListener('transitionend', onSpinEnd);
+    }
+
+    function buildReel(eligible, winner) {
+      const reel = [];
+      while (reel.length < MIN_REEL_LENGTH) {
+        reel.push(...shuffle(eligible.slice()));
+      }
+      // The winner always occupies the final slot, which the reel is
+      // mathematically guaranteed to land on.
+      reel.push(winner);
+      return reel;
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderReelItem(p) {
+      const cover = p.cover_url
+        ? `<img src="${escapeHtml(p.cover_url)}" alt="" loading="lazy">`
+        : `<div class="no-cover">${escapeHtml(formatTitleAuthor(p))}</div>`;
+      return `<div class="reel-item">${cover}</div>`;
+    }
+
+    function showResult(p) {
+      document.getElementById('decide-cover').innerHTML = p.cover_url
+        ? `<img src="${escapeHtml(p.cover_url)}" alt="">`
+        : `<div class="no-cover">${escapeHtml(formatTitleAuthor(p))}</div>`;
+
+      document.getElementById('decide-title').textContent = formatTitleAuthor(p);
+      document.getElementById('decide-description').textContent = p.fetched_description || '';
+
+      const reasonEl = document.getElementById('decide-reason');
+      if (p.user_reason) {
+        document.getElementById('decide-reason-text').textContent = p.user_reason;
+        reasonEl.hidden = false;
+      } else {
+        reasonEl.hidden = true;
+      }
+
+      const votes = p.votes_interested || 0;
+      document.getElementById('decide-votes').textContent =
+        `${votes} reader${votes === 1 ? '' : 's'} interested`;
+
+      resultCard.hidden = false;
+      requestAnimationFrame(() => resultCard.classList.add('visible'));
+
+      setButtonBusy(false);
+    }
+
+    function setButtonBusy(busy) {
+      chooseBtn.disabled = busy;
+      chooseAgainBtn.disabled = busy;
+      chooseBtn.textContent = busy ? 'Shuffling…' : 'Choose book';
+    }
+
+    function resetButton(label) {
+      chooseBtn.disabled = false;
+      chooseBtn.textContent = label;
+      chooseBtn.classList.remove('hidden-btn');
+    }
+
+    function showStageMessage(text) {
+      stageMessage.textContent = text;
+      stageMessage.hidden = false;
+    }
+
+    function hideStageMessage() {
+      stageMessage.hidden = true;
+    }
+
+    function formatTitleAuthor(p) {
+      if (p.fetched_title) {
+        return p.fetched_authors
+          ? `${p.fetched_title} by ${p.fetched_authors}`
+          : p.fetched_title;
+      }
+      return p.book_name_author;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
